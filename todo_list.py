@@ -1,10 +1,15 @@
 import streamlit as st
 from task import Task
+from quotes import generate_quote
 
 if "task_list" not in st.session_state:
     st.session_state.task_list = []
 task_list = st.session_state.task_list
 
+if "quote" not in st.session_state:
+    api_key = st.secrets["quotes_api"]["api_key"]
+    st.session_state.quote = generate_quote(api_key)
+    
 def add_task(task_name: str):
     task_list.append(Task(task_name))
     
@@ -21,6 +26,8 @@ with st.sidebar:
     task = st.text_input("Enter a task")
     if st.button("Add task",type='primary'):
         add_task(task)
+
+st.info(st.session_state.quote)
 
 total_tasks = len(task_list)
 completed_tasks = sum(1 for task in task_list if task.is_done)
